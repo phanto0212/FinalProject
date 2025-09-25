@@ -172,11 +172,11 @@ function HeaderComponent() {
             <ContainerButton onClick={() => navigate('/recipes')}>
               <LinkButton>
                 <Icon icon={faUtensils} /> Công thức
-                {hasNotifications && <NotificationBadge>1</NotificationBadge>}
+                {/* {hasNotifications && <NotificationBadge>1</NotificationBadge>} */}
               </LinkButton>
             </ContainerButton>
             
-            <ContainerButton onClick={() => navigate('/ai-suggestions')}>
+            <ContainerButton onClick={() => navigate('/ai-chef')}>
               <LinkButton>
                 <Icon icon={faRobot} /> Gợi ý AI
               </LinkButton>

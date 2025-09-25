@@ -32,6 +32,7 @@ import {
   SuccessMessage,
   ErrorMessage
 } from './style';
+import newRequest from '../../utils/request';
 
 const RegisterPage = () => {
   const [form] = Form.useForm();
@@ -90,23 +91,15 @@ const RegisterPage = () => {
         return;
       }
 
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
-      // Mock registration logic
-      const newUser = {
-        id: Date.now(),
-        name: values.name,
+      const response = await newRequest.post('/api/auth/register', {
         email: values.email,
-        avatar: null,
-        createdAt: new Date().toISOString()
-      };
+        password: values.password,
+        repassword: values.password,
+      });
       
-      // Save user info (in real app, this would be handled by backend)
-      localStorage.setItem('registeredUser', JSON.stringify(newUser));
-      
-      setSuccess('Tài khoản đã được tạo thành công! Vui lòng kiểm tra email để xác thực.');
-      
+      if (response.status === 200) {
+         setSuccess('Tài khoản đã được tạo thành công! Vui lòng kiểm tra email để xác thực.');
+      }
       // Redirect to login after 3 seconds
       setTimeout(() => {
         navigate('/login', { 
@@ -303,6 +296,7 @@ const RegisterPage = () => {
                   htmlType="submit" 
                   loading={loading}
                   disabled={loading || !agreeTerms}
+                  onClick={() => {}}
                 >
                   {loading && <LoadingSpinner />}
                   {loading ? 'Đang tạo tài khoản...' : 'Tạo Tài Khoản'}

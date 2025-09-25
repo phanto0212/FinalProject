@@ -28,6 +28,7 @@ import {
   LoadingSpinner,
   ErrorMessage
 } from './style';
+import newRequest from '../../utils/request';
 
 const LoginPage = () => {
   const [form] = Form.useForm();
@@ -41,30 +42,25 @@ const LoginPage = () => {
       setLoading(true);
       setError('');
       
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      const response = await newRequest.post('/api/auth/login', {
+        username: values.email,
+        password: values.password
+      });
       
       // Mock validation
-      if (values.email === 'admin@recipe.com' && values.password === '123456') {
-        // Save token and user info
-        const mockToken = 'mock-jwt-token-' + Date.now();
-        const mockUser = {
-          id: 1,
-          name: 'Recipe Master',
-          email: values.email,
-          avatar: null
-        };
-        
-        localStorage.setItem('authToken', mockToken);
-        localStorage.setItem('userInfo', JSON.stringify(mockUser));
-        
+      if (response.status === 200) {
+         localStorage.setItem('authToken', response.data.token);
         message.success('Đăng nhập thành công! Chào mừng bạn trở lại 🍳');
         navigate('/');
       } else {
         setError('Email hoặc mật khẩu không chính xác. Vui lòng thử lại!');
       }
     } catch (err) {
+       if (err.response && err.response.status === 401) {
+      setError('Email hoặc mật khẩu không chính xác. Vui lòng thử lại!');
+    } else {
       setError('Có lỗi xảy ra trong quá trình đăng nhập. Vui lòng thử lại!');
+    }
     } finally {
       setLoading(false);
     }

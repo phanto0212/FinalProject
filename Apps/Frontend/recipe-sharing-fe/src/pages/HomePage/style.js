@@ -234,6 +234,8 @@ export const SectionSubtitle = styled.p`
 export const FeatureGrid = styled(Row)`
   max-width: 1200px;
   margin: 0 auto;
+  display: flex;
+  justify-content: center;
 `;
 
 export const FeatureCard = styled.div`
@@ -246,6 +248,9 @@ export const FeatureCard = styled.div`
   position: relative;
   overflow: hidden;
   height: 100%;
+  width: 100%;
+  max-width: 350px;
+  margin: 0 auto;
   
   &::before {
     content: '';
@@ -314,6 +319,8 @@ export const RecipeGrid = styled(Row)`
   margin: 0 auto;
   position: relative;
   z-index: 2;
+  display: flex;
+  justify-content: center;
 `;
 
 export const RecipeCard = styled.div`
@@ -323,6 +330,9 @@ export const RecipeCard = styled.div`
   box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
   transition: all 0.3s ease;
   cursor: pointer;
+  width: 100%;
+  max-width: 280px;
+  margin: 0 auto;
   
   &:hover {
     transform: translateY(-8px) scale(1.02);
@@ -382,11 +392,18 @@ export const StatsSection = styled.section`
 export const StatsGrid = styled(Row)`
   max-width: 800px;
   margin: 0 auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `;
 
 export const StatCard = styled.div`
   text-align: center;
   padding: 30px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 `;
 
 export const StatNumber = styled.div`
@@ -416,6 +433,8 @@ export const StatLabel = styled.p`
 // Responsive styles
 export const ResponsiveCol = styled(Col)`
   margin-bottom: 30px;
+  display: flex;
+  justify-content: center;
   
   @media (max-width: 768px) {
     margin-bottom: 40px;

@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.recipe.sharing.recipe_backend.Service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -28,6 +29,7 @@ public class JwtTokenUtil {
     private static final Logger logger = LoggerFactory.getLogger(JwtTokenUtil.class);
     private final Key key;
     private final long expiration;
+    private UserService userService;
 
     // Constructor Injection for secretKey and expiration
     public JwtTokenUtil(@Value("${jwt.secret}") String secretKey, @Value("${jwt.expiration}") long expiration) {
@@ -35,9 +37,8 @@ public class JwtTokenUtil {
         this.expiration = expiration;
     }
 
-    public String generateToken(Long id, String username, List<String> roles) {
+    public String generateToken(String username, List<String> roles) {
         Claims claims = Jwts.claims().setSubject(username);
-        claims.put("id", id);
         claims.put("roles", roles);
 
         return Jwts.builder()
@@ -47,19 +48,13 @@ public class JwtTokenUtil {
                 .compact();
     }
 
-
     public String getUsernameFromToken(String token) {
         return getClaimsFromToken(token).getSubject();
     }
 
-    @SuppressWarnings("unchecked")
     public List<String> getRolesFromToken(String token) {
         Claims claims = getClaimsFromToken(token);
-        return (List<String>) claims.get("roles", List.class);
-    }
-
-    public Long getIdFromToken(String token) {
-        return getClaimsFromToken(token).get("id", Long.class);
+        return claims.get("roles", List.class);
     }
 
     public boolean validateToken(String token) {
@@ -92,6 +87,7 @@ public class JwtTokenUtil {
     public Authentication getAuthentication(String token) {
         String username = getUsernameFromToken(token);
         List<String> roles = getRolesFromToken(token);
+
         UserDetails userDetails = User.builder()
                 .username(username)
                 .password("") // Not needed for JWT
@@ -102,5 +98,6 @@ public class JwtTokenUtil {
 
         return new UsernamePasswordAuthenticationToken(userDetails, token, userDetails.getAuthorities());
     }
+
 }
 

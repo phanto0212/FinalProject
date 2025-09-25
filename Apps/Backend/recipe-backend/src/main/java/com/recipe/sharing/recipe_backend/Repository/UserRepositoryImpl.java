@@ -14,7 +14,6 @@ import jakarta.persistence.PersistenceContext;
 @Transactional
 public class UserRepositoryImpl implements UserRepositoryCustom {
 
-
     @PersistenceContext
     private EntityManager entityManager;
 
