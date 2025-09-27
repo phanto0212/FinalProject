@@ -28,7 +28,7 @@ public class Recipe implements Serializable {
     @Column(name = "image_url", length = 500)
     private String imageUrl;
 
-    @Column(length = 5)
+    @Column(name = "status")
     private String status;
 
     @Column(name = "cook_time")
@@ -43,17 +43,19 @@ public class Recipe implements Serializable {
     @Column(name = "difficulty", length = 20)
     private String difficulty;
 
+    @Column(name = "servings")
     private Integer servings;
 
+    @Column(name = "calories")
     private Integer calories;
 
-    @Column(length = 10)
+    @Column(name = "protein")
     private String protein;
 
-    @Column(length = 10)
+    @Column(name = "carbs")
     private String carbs;
 
-    @Column(length = 10)
+    @Column(name = "fat")
     private String fat;
 
     @Column(name = "average_rating", precision = 3, scale = 1)
@@ -74,7 +76,7 @@ public class Recipe implements Serializable {
     @Column(name = "chef_name", length = 100)
     private String chefName;
 
-    @Column(length = 50)
+    @Column(name = "category", length = 50)
     private String category;
 
     @Column(name = "cuisine_type", length = 50)

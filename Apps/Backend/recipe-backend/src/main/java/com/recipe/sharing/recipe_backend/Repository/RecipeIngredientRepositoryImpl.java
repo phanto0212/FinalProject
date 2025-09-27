@@ -38,4 +38,9 @@ public class RecipeIngredientRepositoryImpl implements RecipeIngredientRepositor
 
     }
 
+    @Override
+    public RecipeIngredient getById(Integer id) {
+        return em.find(RecipeIngredient.class, id);
+    }
+
 }

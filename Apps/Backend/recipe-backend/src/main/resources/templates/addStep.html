@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Recipe Steps - Recipe Haven</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .bg-gradient {
+            background: linear-gradient(90deg, #667eea, #764ba2);
+        }
+
+        .navbar-brand {
+            color: #FFD700 !important;
+            font-weight: bold;
+            font-size: 1.5rem;
+        }
+
+        .nav-link {
+            color: #FFD700 !important;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .recipe-header {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 2rem;
+            border-radius: 15px;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .step-card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            border-left: 4px solid #667eea;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .step-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.12);
+        }
+
+        .step-number {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-right: 1rem;
+            flex-shrink: 0;
+        }
+
+        .step-content {
+            flex: 1;
+        }
+
+        .step-instruction {
+            color: #555;
+            line-height: 1.6;
+            margin: 0;
+        }
+
+        .add-step-form {
+            background: #f8f9fa;
+            padding: 2rem;
+            border-radius: 15px;
+            margin-bottom: 2rem;
+            border: 2px dashed #667eea;
+        }
+
+        .form-control {
+            border-radius: 8px;
+            border: 2px solid #e9ecef;
+            padding: 0.75rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-control:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #dc3545, #c82333);
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            transition: all 0.3s ease;
+        }
+
+        .btn-danger:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(220, 53, 69, 0.4);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+            transform: translateY(-2px);
+        }
+
+        .steps-container {
+            min-height: 200px;
+        }
+
+        .no-steps {
+            text-align: center;
+            color: #6c757d;
+            font-style: italic;
+            padding: 2rem;
+        }
+
+        .step-actions {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        .breadcrumb {
+            background: none;
+            padding: 0;
+            margin-bottom: 1rem;
+        }
+
+        .breadcrumb-item a {
+            color: #667eea;
+            text-decoration: none;
+        }
+
+        .breadcrumb-item.active {
+            color: #6c757d;
+        }
+    </style>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-dark bg-gradient">
+    <div class="container-fluid">
+        <a class="navbar-brand fw-bold fs-3" href="/">🍳 Recipe Haven</a>
+        <div class="collapse navbar-collapse">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link text-white" href="/">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white" href="/recipe">Recipes</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white" href="/account">Accounts</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="container mt-4">
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/recipe">Recipes</a></li>
+            <li class="breadcrumb-item active" th:text="${recipe.title}">Recipe Steps</li>
+        </ol>
+    </nav>
+
+    <!-- Recipe Header -->
+    <div class="recipe-header">
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <h1 class="mb-2" th:text="${recipe.title}">Recipe Title</h1>
+                <p class="mb-0" th:text="${recipe.description}">Recipe description</p>
+            </div>
+            <div class="col-md-4 text-md-right">
+                <span class="badge badge-light p-2" th:text="'Steps: ' + ${#lists.size(steps)}">Steps: 0</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add New Step Form -->
+    <div class="add-step-form">
+        <h4 class="mb-3"><i class="fas fa-plus-circle"></i> Add New Step</h4>
+        <form th:action="@{'/recipe/' + ${recipe.id} + '/addStep'}" method="post">
+            <div class="form-group">
+                <label for="instruction">Step Instruction</label>
+                <textarea class="form-control"
+                          id="instruction"
+                          name="instruction"
+                          rows="3"
+                          placeholder="Enter detailed instruction for this step..."
+                          required></textarea>
+            </div>
+            <div class="text-right">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-plus"></i> Add Step
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Recipe Steps List -->
+    <div class="steps-container">
+        <h4 class="mb-3"><i class="fas fa-list-ol"></i> Recipe Steps</h4>
+
+        <div th:if="${#lists.isEmpty(steps)}" class="no-steps">
+            <i class="fas fa-utensils fa-3x mb-3" style="color: #dee2e6;"></i>
+            <p>No steps added yet. Add your first step above!</p>
+        </div>
+
+        <div th:each="step, iterStat : ${steps}" class="step-card">
+            <div class="d-flex align-items-start">
+                <div class="step-number" th:text="${step.stepOrder}">1</div>
+                <div class="step-content">
+                    <p class="step-instruction" th:text="${step.instruction}">Step instruction goes here</p>
+                </div>
+                <div class="step-actions">
+                    <form th:action="@{'/deleteStep/' + ${step.id}}" method="post"
+                          onsubmit="return confirm('Are you sure you want to delete this step?')">
+                        <button type="submit" class="btn btn-danger btn-sm">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="text-center mt-4 mb-4">
+        <a href="/recipe" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Back to Recipes
+        </a>
+        <a th:href="@{'/editRecipe/' + ${recipe.id}}" class="btn btn-primary">
+            <i class="fas fa-edit"></i> Edit Recipe
+        </a>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

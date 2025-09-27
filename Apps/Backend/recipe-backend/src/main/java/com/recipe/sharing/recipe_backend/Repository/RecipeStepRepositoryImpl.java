@@ -14,7 +14,7 @@ public class RecipeStepRepositoryImpl implements RecipeStepRepository {
     private EntityManager em;
     @Override
     public List<RecipeStep> getAllByRecipeId(Integer recipeId) {
-        String hql = "FROM RecipeStep e where e.recipe.id = :recipeId";
+        String hql = "FROM RecipeStep e where e.recipe.id = :recipeId ORDER BY e.stepOrder ASC";
         return  em.createQuery(hql, RecipeStep.class)
                 .setParameter("recipeId", recipeId)
                 .getResultList();
@@ -36,5 +36,10 @@ public class RecipeStepRepositoryImpl implements RecipeStepRepository {
         if (recipeStep != null) {
             em.remove(recipeStep);
         }
+    }
+
+    @Override
+    public RecipeStep getById(Integer id) {
+        return em.find(RecipeStep.class, id);
     }
 }

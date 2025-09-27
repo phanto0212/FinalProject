@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Recipe Ingredients - Recipe Haven</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <style>
+    .bg-gradient {
+      background: linear-gradient(90deg, #667eea, #764ba2);
+    }
+
+    .navbar-brand {
+      color: #FFD700 !important;
+      font-weight: bold;
+      font-size: 1.5rem;
+    }
+
+    .nav-link {
+      color: #FFD700 !important;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    .recipe-header {
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: white;
+      padding: 2rem;
+      border-radius: 15px;
+      margin-bottom: 2rem;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    }
+
+    .ingredient-card {
+      background: white;
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 1rem;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+      border-left: 4px solid #28a745;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .ingredient-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 25px rgba(0,0,0,0.12);
+    }
+
+    .add-ingredient-form {
+      background: #f8f9fa;
+      padding: 2rem;
+      border-radius: 15px;
+      margin-bottom: 2rem;
+      border: 2px dashed #28a745;
+    }
+
+    .form-control {
+      border-radius: 8px;
+      border: 2px solid #e9ecef;
+      padding: 0.75rem;
+      transition: border-color 0.3s ease;
+    }
+
+    .form-control:focus {
+      border-color: #667eea;
+      box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+    }
+
+    select.form-control {
+      appearance: none;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16"><path fill="%23667eea" d="M8 11L3 6h10z"/></svg>');
+      background-repeat: no-repeat;
+      background-position: right 15px center;
+      background-size: 16px;
+      cursor: pointer;
+      padding-right: 45px;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      border: none;
+      padding: 12px 30px;
+      border-radius: 25px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+    }
+
+    .btn-danger {
+      background: linear-gradient(135deg, #dc3545, #c82333);
+      border: none;
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 0.875rem;
+      transition: all 0.3s ease;
+    }
+
+    .btn-danger:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(220, 53, 69, 0.4);
+    }
+
+    .btn-secondary {
+      background: #6c757d;
+      border: none;
+      padding: 10px 25px;
+      border-radius: 20px;
+      transition: all 0.3s ease;
+    }
+
+    .btn-secondary:hover {
+      background: #5a6268;
+      transform: translateY(-2px);
+    }
+
+    .ingredient-info {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .ingredient-details {
+      flex: 1;
+    }
+
+    .ingredient-name {
+      font-weight: bold;
+      color: #333;
+      margin-bottom: 0.5rem;
+    }
+
+    .ingredient-quantity {
+      color: #28a745;
+      font-weight: 600;
+    }
+
+    .ingredient-note {
+      color: #6c757d;
+      font-style: italic;
+      margin-top: 0.5rem;
+    }
+
+    .no-ingredients {
+      text-align: center;
+      color: #6c757d;
+      font-style: italic;
+      padding: 2rem;
+    }
+
+    .breadcrumb {
+      background: none;
+      padding: 0;
+      margin-bottom: 1rem;
+    }
+
+    .breadcrumb-item a {
+      color: #667eea;
+      text-decoration: none;
+    }
+
+    .breadcrumb-item.active {
+      color: #6c757d;
+    }
+  </style>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-dark bg-gradient">
+  <div class="container-fluid">
+    <a class="navbar-brand fw-bold fs-3" href="/">🍳 Recipe Haven</a>
+    <div class="collapse navbar-collapse">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item">
+          <a class="nav-link text-white" href="/">Home</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link text-white" href="/recipe">Recipes</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link text-white" href="/account">Accounts</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<div class="container mt-4">
+  <!-- Breadcrumb -->
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="/recipe">Recipes</a></li>
+      <li class="breadcrumb-item active" th:text="${recipe.title}">Recipe Ingredients</li>
+    </ol>
+  </nav>
+
+  <!-- Recipe Header -->
+  <div class="recipe-header">
+    <div class="row align-items-center">
+      <div class="col-md-8">
+        <h1 class="mb-2" th:text="${recipe.title}">Recipe Title</h1>
+        <p class="mb-0" th:text="${recipe.description}">Recipe description</p>
+      </div>
+      <div class="col-md-4 text-md-right">
+        <span class="badge badge-light p-2" th:text="'Ingredients: ' + ${#lists.size(ingredients)}">Ingredients: 0</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add New Ingredient Form -->
+  <div class="add-ingredient-form">
+    <h4 class="mb-3"><i class="fas fa-plus-circle"></i> Add New Ingredient</h4>
+    <form th:action="@{'/recipe/' + ${recipe.id} + '/addIngredient'}" method="post">
+      <div class="row">
+        <div class="col-md-4">
+          <div class="form-group">
+            <label for="ingredientId">Ingredient</label>
+            <input type="text"
+                   class="form-control"
+                   id="ingredientSearch"
+                   name="ingredientSearch"
+                   placeholder="Type to search ingredient..."
+                   list="ingredientsList"
+                   autocomplete="off"
+                   required>
+            <datalist id="ingredientsList">
+              <option th:each="ingredient : ${allIngredients}"
+                      th:value="${ingredient.name}"
+                      th:attr="data-id=${ingredient.id}">
+            </datalist>
+            <input type="hidden" id="ingredientId" name="ingredientId">
+          </div>
+        </div>
+        <div class="col-md-2">
+          <div class="form-group">
+            <label for="quantity">Quantity</label>
+            <input type="number" step="0.01" class="form-control" id="quantity" name="quantity" required>
+          </div>
+        </div>
+        <div class="col-md-2">
+          <div class="form-group">
+            <label for="unit">Unit</label>
+            <select id="unit" name="unit">
+              <option value="g">Gram (g)</option>
+              <option value="kg">Kilogram (kg)</option>
+              <option value="ml">Mililít (ml)</option>
+              <option value="l">Lít (l)</option>
+              <option value="cốc">Cốc</option>
+              <option value="thìa canh">Thìa canh</option>
+              <option value="thìa cà phê">Thìa cà phê</option>
+              <option value="miếng">Miếng / Cái</option>
+              <option value="củ">Củ</option>
+              <option value="bó">Bó</option>
+              <option value="thanh">Thanh</option>
+                <option value="quả">Quả</option>
+                <option value="lá">Lá</option>
+                <option value="muỗng">Muỗng</option>
+                <option value="chén">Chén</option>
+                <option value="tách">Tách</option>
+                <option value="nhánh">Nhánh</option>
+                <option value="túi">Túi</option>
+                <option value="gói">Gói</option>
+                <option value="hộp">Hộp</option>
+                <option value="chai">Chai</option>
+                <option value="lon">Lon</option>
+                <option value="cây">Cây</option>
+                <option value="bát">Bát</option>
+              <option value="bông">Bông</option>
+
+
+            </select>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="form-group">
+            <label for="note">Note (Optional)</label>
+            <input type="text" class="form-control" id="note" name="note" placeholder="e.g., chopped, diced">
+          </div>
+        </div>
+        <div class="col-md-1">
+          <div class="form-group">
+            <label>&nbsp;</label>
+            <button type="submit" class="btn btn-primary btn-block">
+              <i class="fas fa-plus"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <!-- Ingredients List -->
+  <div class="ingredients-container">
+    <h4 class="mb-3"><i class="fas fa-list"></i> Recipe Ingredients</h4>
+
+    <div th:if="${#lists.isEmpty(ingredients)}" class="no-ingredients">
+      <i class="fas fa-carrot fa-3x mb-3" style="color: #dee2e6;"></i>
+      <p>No ingredients added yet. Add your first ingredient above!</p>
+    </div>
+
+    <div th:each="ingredient : ${ingredients}" class="ingredient-card">
+      <div class="ingredient-info">
+        <div class="ingredient-details">
+          <div class="ingredient-name" th:text="${ingredient.ingredient.name}">Ingredient Name</div>
+          <div class="ingredient-quantity">
+            <span th:text="${ingredient.quantity}">0</span>
+            <span th:text="${ingredient.unit}">unit</span>
+          </div>
+          <div class="ingredient-note" th:if="${ingredient.note}" th:text="${ingredient.note}">Note</div>
+        </div>
+        <div>
+          <form th:action="@{'/deleteRecipeIngredient/' + ${ingredient.id}}" method="post"
+                onsubmit="return confirm('Are you sure you want to delete this ingredient?')">
+            <button type="submit" class="btn btn-danger btn-sm">
+              <i class="fas fa-trash"></i>
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Action Buttons -->
+  <div class="text-center mt-4 mb-4">
+    <a href="/recipe" class="btn btn-secondary">
+      <i class="fas fa-arrow-left"></i> Back to Recipes
+    </a>
+    <a th:href="@{'/recipe/' + ${recipe.id} + '/steps'}" class="btn btn-primary">
+      <i class="fas fa-list-ol"></i> Manage Steps
+    </a>
+  </div>
+</div>
+<script>
+  document.getElementById('ingredientSearch').addEventListener('input', function() {
+    const input = this.value;
+    const datalist = document.getElementById('ingredientsList');
+    const options = datalist.querySelectorAll('option');
+    const hiddenInput = document.getElementById('ingredientId');
+
+    // Tìm option matching
+    for (let option of options) {
+      if (option.value === input) {
+        hiddenInput.value = option.getAttribute('data-id');
+        break;
+      } else {
+        hiddenInput.value = '';
+      }
+    }
+  });
+
+  // Validate form trước khi submit
+  document.querySelector('form').addEventListener('submit', function(e) {
+    const hiddenInput = document.getElementById('ingredientId');
+    if (!hiddenInput.value) {
+      e.preventDefault();
+      alert('Please select a valid ingredient from the list');
+    }
+  });
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

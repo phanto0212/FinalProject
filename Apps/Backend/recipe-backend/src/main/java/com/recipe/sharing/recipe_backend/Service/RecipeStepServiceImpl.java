@@ -25,4 +25,9 @@ public class RecipeStepServiceImpl implements  RecipeStepService {
     public void deleteById(Integer id) {
         recipeStepRepository.deleteById(id);
     }
+
+    @Override
+    public RecipeStep getById(Integer id) {
+        return recipeStepRepository.getById(id);
+    }
 }

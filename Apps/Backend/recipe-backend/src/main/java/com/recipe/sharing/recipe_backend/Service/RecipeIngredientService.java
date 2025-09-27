@@ -8,4 +8,5 @@ public interface RecipeIngredientService {
     List<RecipeIngredient> getList(Integer recipeId);
     void addOrUpdate(RecipeIngredient recipeIngredient);
     void deleteById(Integer id);
+    RecipeIngredient getById(Integer id);
 }

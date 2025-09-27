@@ -8,5 +8,6 @@ public interface RecipeIngredientRepository {
     List<RecipeIngredient> getList(Integer recipeId);
     void addOrUpdate(RecipeIngredient recipeIngredient);
     void deleteById(Integer id);
+    RecipeIngredient getById(Integer id);
 
 }

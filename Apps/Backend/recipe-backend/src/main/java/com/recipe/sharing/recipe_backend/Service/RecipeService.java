@@ -9,4 +9,5 @@ public interface RecipeService {
     Recipe getRecipeById(Integer id);
     void addOrUpdate(Recipe recipe);
     void deleteById(Integer id);
+    List<Recipe> getAllRecipeSuggestions( String keyword);
 }

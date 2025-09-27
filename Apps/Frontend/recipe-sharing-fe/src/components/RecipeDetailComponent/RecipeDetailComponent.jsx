@@ -58,12 +58,12 @@ import {
   ResponsiveWrapper,
   LoadingSkeleton
 } from './style';
+import { useParams } from 'react-router-dom';
 
 const RecipeDetailComponent = ({ recipeId, recipeData, loading }) => {
   const [userRating, setUserRating] = useState(0);
   const [isFavorited, setIsFavorited] = useState(false);
   const [servingSize, setServingSize] = useState(4);
-
   // Sample data - thay thế bằng data thực từ props hoặc API
   const defaultRecipe = {
     id: 1,
@@ -120,7 +120,7 @@ const RecipeDetailComponent = ({ recipeId, recipeData, loading }) => {
       bio: "15 năm kinh nghiệm trong ẩm thực truyền thống Việt Nam, từng làm việc tại các nhà hàng 5 sao."
     },
     
-    tags: ["Món chính", "Truyền thống", "Hà Nội", "Phở", "Bò", "Nước dùng", "Khó"]
+    tags: []
   };
 
   const recipe = recipeData || defaultRecipe;

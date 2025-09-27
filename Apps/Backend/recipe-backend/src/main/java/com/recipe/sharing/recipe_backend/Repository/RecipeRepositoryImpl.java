@@ -3,6 +3,7 @@ package com.recipe.sharing.recipe_backend.Repository;
 import com.recipe.sharing.recipe_backend.Entity.Recipe;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.TypedQuery;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -40,6 +41,22 @@ public class RecipeRepositoryImpl implements RecipeRepository {
         Recipe recipe = entityManager.find(Recipe.class, id);
         if (recipe != null) {
             entityManager.remove(recipe);
+        }
+    }
+
+    @Override
+    public List<Recipe> getAllRecipeSuggestions(String keyword) {
+        try {
+            String hql = "SELECT r FROM Recipe r " +
+                    "WHERE LOWER(r.title) LIKE LOWER(CONCAT('%', :keyword, '%')) and r.status = 'P'" ;
+
+            TypedQuery<Recipe> query = entityManager.createQuery(hql, Recipe.class);
+            query.setParameter("keyword", keyword.trim());
+
+            return query.getResultList();
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
         }
     }
 }

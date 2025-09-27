@@ -8,4 +8,5 @@ public interface RecipeStepRepository {
     List<RecipeStep> getAllByRecipeId(Integer recipeId);
     void addOrUpdate(RecipeStep recipeStep);
     void deleteById(Integer id);
+    RecipeStep getById(Integer id);
 }

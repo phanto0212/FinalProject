@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Recipes List</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        .bg-gradient {
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            background-color: #667eea;
+        }
+
+        .navbar-nav .nav-link {
+            color: #FFD700 !important;
+            position: relative;
+            transition: color 0.3s ease, transform 0.3s ease;
+        }
+
+        .navbar-nav .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 2px;
+            background: #FFD700;
+            bottom: -5px;
+            left: 0;
+            transform: scaleX(0);
+            transform-origin: right;
+            transition: transform 0.3s ease;
+        }
+
+        .navbar-nav .nav-link:hover {
+            color: #FFD700 !important;
+        }
+
+        .navbar-nav .nav-link:hover::after {
+            transform: scaleX(1);
+            transform-origin: left;
+        }
+
+        .navbar-brand {
+            color: #FFD700 !important;
+            font-weight: bold;
+            font-size: 1.5rem;
+        }
+
+        .container{
+            margin-left: 130px;
+            max-width: 1150px;
+        }
+
+        .row-btn-action {
+            display: flex;
+            gap: 5px;
+        }
+
+        .row-btn-action form {
+            margin: 0;
+        }
+
+        .row-btn-action button {
+            width: 80px;
+        }
+
+        .small-column {
+            max-width: 100px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .medium-column {
+            max-width: 200px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .recipe-image {
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+            border-radius: 5px;
+        }
+
+        .modal-dialog {
+            max-width: 80%;
+        }
+
+        .modal-header {
+            background-color: #667eea;
+            color: #fff;
+            border-bottom: 2px solid #764ba2;
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+        }
+
+        .modal-body {
+            padding: 2rem;
+        }
+
+        .form-group label {
+            font-weight: bold;
+            color: #333;
+        }
+
+        .form-control {
+            border-radius: 0.25rem;
+            border: 1px solid #ced4da;
+        }
+
+        .btn-primary {
+            background-color: #667eea;
+            border-color: #667eea;
+        }
+
+        .btn-primary:hover {
+            background-color: #764ba2;
+            border-color: #764ba2;
+        }
+
+        .status-published {
+            color: #28a745;
+            font-weight: bold;
+        }
+
+        .status-draft {
+            color: #ffc107;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-dark bg-gradient">
+    <div class="container-fluid">
+        <a class="navbar-brand fw-bold fs-3" href="/" style="color: #FFD700;">🍳 Recipe Haven</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link text-white hover-effect" href="/">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white hover-effect" href="/recipe">Recipes</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white hover-effect" href="/account">Accounts</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="container mt-4">
+    <h2>Recipes Management</h2>
+        <button type="button" class="btn btn-secondary btn-action" data-bs-toggle="modal" data-bs-target="#addRecipeModal">Add</button>
+    <table class="table">
+        <thead>
+        <tr>
+            <th scope="col">ID</th>
+            <th scope="col">Image</th>
+            <th scope="col">Title</th>
+            <th scope="col">Chef</th>
+            <th scope="col">Category</th>
+            <th scope="col">Difficulty</th>
+            <th scope="col">Cook Time</th>
+            <th scope="col">Servings</th>
+            <th scope="col">Status</th>
+            <th scope="col">Rating</th>
+            <th scope="col">Views</th>
+            <th scope="col">Add</th>
+            <th scope="col">Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="recipe : ${recipes}">
+            <td th:text="${recipe.id}" class="small-column"></td>
+            <td>
+                <img th:src="${recipe.imageUrl}" alt="Recipe Image" class="recipe-image" th:if="${recipe.imageUrl}">
+                <span th:unless="${recipe.imageUrl}">No Image</span>
+            </td>
+            <td th:text="${recipe.title}" class="medium-column"></td>
+            <td th:text="${recipe.chefName}" class="small-column"></td>
+            <td th:text="${recipe.category}" class="small-column"></td>
+            <td th:text="${recipe.difficulty}" class="small-column"></td>
+            <td th:text="${recipe.cookTime} + ' min'" class="small-column"></td>
+            <td th:text="${recipe.servings}" class="small-column"></td>
+            <td>
+        <span th:class="${recipe.status == 'PUBLISHED'} ? 'status-published' : 'status-draft'"
+              th:text="${recipe.status}"></span>
+            </td>
+            <td th:text="${recipe.averageRating}" class="small-column"></td>
+            <td th:text="${recipe.totalViews}" class="small-column"></td>
+            <td class="row-btn-action">
+                <form th:action="@{/editRecipe/{id}(id=${recipe.id})}" method="post">
+                    <button type="submit" class="btn btn-secondary btn-action" style="background-color: blue;">Edit</button>
+                </form>
+                <a th:href="@{'/recipe/' + ${recipe.id} + '/steps'}" class="btn btn-info btn-sm" style="width: 80px;">
+                    <i class="fas fa-list-ol"></i> Steps
+                </a>
+                <a th:href="@{'/recipe/' + ${recipe.id} + '/ingredients'}" class="btn btn-success btn-sm" style="width: 100px;">
+                    <i class="fas fa-leaf"></i> Ingredients
+                </a>
+                <form th:action="@{/deleteRecipe/{id}(id=${recipe.id})}" method="post" onsubmit="return confirm('Are you sure you want to delete this recipe?')">
+                    <button type="submit" class="btn btn-secondary btn-action" style="background-color: red;">Delete</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<!-- Add Recipe Modal -->
+<div class="modal fade" id="addRecipeModal" tabindex="-1" aria-labelledby="addRecipeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addRecipeModalLabel">Add New Recipe</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form th:action="@{/addRecipe}" method="post" enctype="multipart/form-data">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="title">Title</label>
+                                <input type="text" class="form-control" id="title" name="title" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="subtitle">Subtitle</label>
+                                <input type="text" class="form-control" id="subtitle" name="subtitle">
+                            </div>
+                            <div class="form-group">
+                                <label for="description">Description</label>
+                                <textarea class="form-control" id="description" name="description" rows="3"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="imageUrl">Recipe Image</label>
+                                <input type="text" class="form-control-file" id="imageUrl" name="imageUrl">
+                            </div>
+                            <div class="form-group">
+                                <label for="chefName">Chef Name</label>
+                                <input type="text" class="form-control" id="chefName" name="chefName" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="category">Category</label>
+                                <select class="form-control" id="category" name="category" required>
+                                    <option value="">Select Category</option>
+                                    <option value="Appetizer">Appetizer</option>
+                                    <option value="Main Course">Main Course</option>
+                                    <option value="Dessert">Dessert</option>
+                                    <option value="Beverage">Beverage</option>
+                                    <option value="Snack">Snack</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="cuisineType">Cuisine Type</label>
+                                <input type="text" class="form-control" id="cuisineType" name="cuisineType">
+                            </div>
+                            <div class="form-group">
+                                <label for="difficulty">Difficulty</label>
+                                <select class="form-control" id="difficulty" name="difficulty" required>
+                                    <option value="">Select Difficulty</option>
+                                    <option value="Easy">Easy</option>
+                                    <option value="Medium">Medium</option>
+                                    <option value="Hard">Hard</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="prepTime">Prep Time (minutes)</label>
+                                <input type="number" class="form-control" id="prepTime" name="prepTime" min="0">
+                            </div>
+                            <div class="form-group">
+                                <label for="cookTime">Cook Time (minutes)</label>
+                                <input type="number" class="form-control" id="cookTime" name="cookTime" min="0">
+                            </div>
+                            <div class="form-group">
+                                <label for="servings">Servings</label>
+                                <input type="number" class="form-control" id="servings" name="servings" min="1">
+                            </div>
+                            <div class="form-group">
+                                <label for="calories">Calories</label>
+                                <input type="number" class="form-control" id="calories" name="calories" min="0">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="protein">Protein (g)</label>
+                                <input type="text" class="form-control" id="protein" name="protein">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="carbs">Carbs (g)</label>
+                                <input type="text" class="form-control" id="carbs" name="carbs">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="fat">Fat (g)</label>
+                                <input type="text" class="form-control" id="fat" name="fat">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="videoUrl">Video URL (Optional)</label>
+                        <input type="url" class="form-control" id="videoUrl" name="videoUrl">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Add Recipe</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

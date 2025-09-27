@@ -3,7 +3,8 @@ package com.recipe.sharing.recipe_backend.Entity;
 import jakarta.persistence.*;
 
 import java.io.Serializable;
-
+@Entity
+@Table(name = "recipe_steps")
 public class RecipeStep implements Serializable {
 
     private static final long serialVersionUID = 1L;

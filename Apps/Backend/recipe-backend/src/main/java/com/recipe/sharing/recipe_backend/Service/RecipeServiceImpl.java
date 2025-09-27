@@ -30,4 +30,9 @@ public class RecipeServiceImpl implements  RecipeService {
     public void deleteById(Integer id) {
         recipeRepository.deleteById(id);
     }
+
+    @Override
+    public List<Recipe> getAllRecipeSuggestions(String keyword) {
+        return   recipeRepository.getAllRecipeSuggestions(keyword);
+    }
 }

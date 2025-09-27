@@ -25,4 +25,9 @@ public class RecipeIngredientServiceImpl implements RecipeIngredientService {
     public void deleteById(Integer id) {
         recipeIngredientRepository.deleteById(id);
     }
+
+    @Override
+    public RecipeIngredient getById(Integer id) {
+        return   recipeIngredientRepository.getById(id);
+    }
 }
