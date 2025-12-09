@@ -30,7 +30,7 @@ public class GeminiController {
     private RecipeIngredientService recipeIngredientService;
     private static final String API_KEY = "";
     private static final String GEMINI_URL =
-            "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=" + API_KEY;
+            "https://generativelanguage.googleapis.com/v1/models/gemini-2.5-flash-lite:generateContent?key=" + API_KEY;
 
     @PostMapping("/chat")
     public ResponseEntity<?> chat(@RequestBody PromptRequest prompt) {

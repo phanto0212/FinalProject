@@ -10,4 +10,5 @@ public interface RecipeService {
     void addOrUpdate(Recipe recipe);
     void deleteById(Integer id);
     List<Recipe> getAllRecipeSuggestions( String keyword);
+    List<Recipe> getRecipesByUserId(Long userId);
 }

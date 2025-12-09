@@ -38,15 +38,18 @@ public class User {
     private Timestamp created_at;
     @Column(name = "updated_at")
     private Timestamp updated_at;
+    @Column(name = "location")
+    private String location;
+    @Column(name = "bio")
+    private String bio;
+    @Column(name = "online")
+    private Boolean online;
 
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
     @JsonManagedReference
     private Set<User_Role> userRoles;
 
-    public User(Long id, String username, String password, Boolean enabled, String fullName, Boolean gender,
-                Date birthday, String address, String email, String telephone, String avatar_url,
-                Set<User_Role> userRoles) {
-        super();
+    public User(Long id, String username, String password, Boolean enabled, String fullName, Boolean gender, Date birthday, String address, String email, String telephone, String avatar_url, Timestamp created_at, Timestamp updated_at, String location, String bio, Set<User_Role> userRoles) {
         this.id = id;
         this.username = username;
         this.password = password;
@@ -58,6 +61,10 @@ public class User {
         this.email = email;
         this.telephone = telephone;
         this.avatar_url = avatar_url;
+        this.created_at = created_at;
+        this.updated_at = updated_at;
+        this.location = location;
+        this.bio = bio;
         this.userRoles = userRoles;
     }
 
@@ -175,6 +182,30 @@ public class User {
 
     public void setUpdated_at(Timestamp timestamp) {
         this.updated_at = timestamp;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
+    public String getBio() {
+        return bio;
+    }
+
+    public void setBio(String bio) {
+        this.bio = bio;
+    }
+
+    public Boolean getOnline() {
+        return online;
+    }
+
+    public void setOnline(Boolean online) {
+        this.online = online;
     }
 }
 

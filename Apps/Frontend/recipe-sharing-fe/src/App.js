@@ -3,6 +3,7 @@ import {BrowserRouter as Router, Routes, Route} from 'react-router-dom'
 import { routes } from './routes'
 import DefaultComponent from './components/DefaultComponent/DefaultComponent'
 import RecipeDetailPage from './pages/RecipeDetailPage/RecipeDetailPage'
+import InfoUserPage from './pages/InfoUserPage/InfoUserPage'
 
 export function App() {
   
@@ -24,6 +25,7 @@ export function App() {
             })
           }
           <Route path="/recipe/detail/:recipeId" element={<RecipeDetailPage />} />
+          <Route path="/user/info/:userId" element={<InfoUserPage />} />
           {/* <Route path="/payment/:ticketId" element={<PaymentPage />} /> */}
         </Routes>
       </Router>

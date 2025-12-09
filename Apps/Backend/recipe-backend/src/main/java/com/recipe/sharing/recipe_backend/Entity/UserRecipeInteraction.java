@@ -1,5 +1,6 @@
 package com.recipe.sharing.recipe_backend.Entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -9,8 +10,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "user_recipe_interactions")
-@Getter
-@Setter
+
 public class UserRecipeInteraction implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -28,6 +28,7 @@ public class UserRecipeInteraction implements Serializable {
     // Quan hệ với Recipe
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "recipe_id", nullable = false)
+    @JsonIgnore
     private Recipe recipe;
 
     @Column(name = "is_liked")
@@ -64,6 +65,86 @@ public class UserRecipeInteraction implements Serializable {
         this.myRating = myRating;
         this.notes = notes;
         this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public Recipe getRecipe() {
+        return recipe;
+    }
+
+    public void setRecipe(Recipe recipe) {
+        this.recipe = recipe;
+    }
+
+    public Boolean getLiked() {
+        return isLiked;
+    }
+
+    public void setLiked(Boolean liked) {
+        isLiked = liked;
+    }
+
+    public Boolean getBookmarked() {
+        return isBookmarked;
+    }
+
+    public void setBookmarked(Boolean bookmarked) {
+        isBookmarked = bookmarked;
+    }
+
+    public Boolean getTried() {
+        return isTried;
+    }
+
+    public void setTried(Boolean tried) {
+        isTried = tried;
+    }
+
+    public Integer getMyRating() {
+        return myRating;
+    }
+
+    public void setMyRating(Integer myRating) {
+        this.myRating = myRating;
+    }
+
+    public String getNotes() {
+        return notes;
+    }
+
+    public void setNotes(String notes) {
+        this.notes = notes;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
     }
 }

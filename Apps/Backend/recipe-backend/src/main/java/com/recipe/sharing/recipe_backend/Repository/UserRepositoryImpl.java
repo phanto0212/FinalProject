@@ -75,6 +75,15 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
 	    }
 	    return users.get(0); // Trả về người dùng đầu tiên trong danh sách
 	}
-	
+
+    @Override
+    public List<User> getAllUsersOther(Long userId) {
+        String hql = "FROM User u WHERE u.id != :userId";
+
+        return entityManager.createQuery(hql, User.class)
+                .setParameter("userId", userId)
+                .getResultList();
+    }
+
 
 }

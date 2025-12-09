@@ -50,6 +50,7 @@ const LoginPage = () => {
       // Mock validation
       if (response.status === 200) {
          localStorage.setItem('authToken', response.data.token);
+         localStorage.setItem('user', JSON.stringify(response.data.user));
         message.success('Đăng nhập thành công! Chào mừng bạn trở lại 🍳');
         navigate('/');
       } else {

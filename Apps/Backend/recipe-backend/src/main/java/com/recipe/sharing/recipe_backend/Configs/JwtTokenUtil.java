@@ -8,7 +8,10 @@ import java.util.stream.Collectors;
 import com.recipe.sharing.recipe_backend.Service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -29,6 +32,7 @@ public class JwtTokenUtil {
     private static final Logger logger = LoggerFactory.getLogger(JwtTokenUtil.class);
     private final Key key;
     private final long expiration;
+    @Autowired
     private UserService userService;
 
     // Constructor Injection for secretKey and expiration
@@ -97,6 +101,32 @@ public class JwtTokenUtil {
                 .build();
 
         return new UsernamePasswordAuthenticationToken(userDetails, token, userDetails.getAuthorities());
+    }
+    public com.recipe.sharing.recipe_backend.Entity.User getUserByToken(HttpServletRequest request) {
+        String jwt = request.getHeader("Authorization");
+
+        if (jwt == null ) {
+            return null;
+        }
+        if (jwt.startsWith("Bearer ")) {
+            jwt = jwt.substring(7);
+        }
+        Claims claims = getClaimsFromToken(jwt);
+        java.util.Date expiration = claims.getExpiration();
+        if(expiration.before(new java.util.Date())) {
+            return null;
+        }
+        String username = claims.getSubject(); // sub
+
+        if (username == null) {
+            return null;
+        }
+
+        com.recipe.sharing.recipe_backend.Entity.User user = userService.getUserByUsername(username);
+        if (user == null) {
+            return null;
+        }
+        return user;
     }
 
 }

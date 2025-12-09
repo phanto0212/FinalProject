@@ -7,6 +7,11 @@ const fadeIn = keyframes`
   to { opacity: 1; transform: translateY(0); }
 `;
 
+const slideUp = keyframes`
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+`;
+
 const pulse = keyframes`
   0% { transform: scale(1); }
   50% { transform: scale(1.05); }
@@ -60,24 +65,31 @@ export const WrapperHeaderText = styled.span`
   align-items: center;
   
   &::before {
-    content: '�';
-    margin-right: 8px;
-    font-size: 24px;
+    content: '👨‍🍳';
+    margin-right: 10px;
+    font-size: 28px;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
   }
   
   &::after {
     content: '';
     position: absolute;
-    bottom: -5px;
-    left: 0;
-    width: 50%;
+    bottom: -3px;
+    left: 38px;
+    width: 0;
     height: 2px;
-    background: linear-gradient(90deg, #ff8c00, transparent);
-    transition: width 0.3s ease;
+    background: linear-gradient(90deg, #a8d5a8, #7fb069);
+    transition: width 0.4s ease;
+    border-radius: 1px;
   }
   
-  &:hover::after {
-    width: 100%;
+  &:hover {
+    transform: translateY(-1px);
+    filter: drop-shadow(0 4px 8px rgba(0,0,0,0.1));
+    
+    &::after {
+      width: calc(100% - 38px);
+    }
   }
   
   @media (max-width: 768px) {
@@ -335,7 +347,6 @@ export const ContainerButton = styled.div`
 `;
 
 export const Icon = styled(FontAwesomeIcon)`
-  margin-right: 8px;
   font-size: 16px;
   color: #fff;
 `;
@@ -350,6 +361,7 @@ export const User = styled.div`
   transition: all 0.3s ease;
   border: 1px solid rgba(255, 140, 0, 0.3);
   backdrop-filter: blur(10px);
+  margin-right: 16px;
   
   &:hover {
     background: rgba(255, 140, 0, 0.25);
@@ -358,17 +370,13 @@ export const User = styled.div`
   }
   
   @media (max-width: 768px) {
-    position: absolute;
-    top: 12px;
-    right: 60px; // Khoảng cách đến edge
-    padding: 3px 10px;
+    padding: 4px 10px;
+    margin-right: 10px;
   }
   
   @media (max-width: 480px) {
-    top: 10px;
-    right: 60px;
     padding: 3px 8px;
-    max-width: 100px;
+    margin-right: 8px;
   }
 `;
 
@@ -408,42 +416,28 @@ export const UserIcon = styled(FontAwesomeIcon)`
 `;
 
 export const SearchContainer = styled.div`
-  margin-right: 15px;
+  margin-right: 20px;
   flex: 1;
-  max-width: 300px;
+  max-width: 280px;
   
   @media (max-width: 992px) {
-    max-width: 220px;
+    max-width: 200px;
+    margin-right: 16px;
   }
   
   @media (max-width: 768px) {
-    position: absolute;
-    top: 12px;
-    right: 170px; // Tăng giá trị này để đẩy xa khỏi User
-    max-width: 150px; // Giảm chiều rộng để tránh chồng lấn
-    margin-right: 0;
-  }
-  
-  @media (max-width: 576px) {
-    right: 150px;
-    max-width: 120px;
-  }
-  
-  @media (max-width: 480px) {
-    display: none; // Ẩn trên mobile nhỏ và sử dụng SearchIconButton thay thế
+    display: none;
   }
 `;
+
 
 export const SearchIconButton = styled.div`
   display: none;
   
-  @media (max-width: 480px) {
+  @media (max-width: 768px) {
     display: flex;
     align-items: center;
     justify-content: center;
-    position: absolute;
-    top: 10px;
-    right: 110px; // Tăng khoảng cách với User
     width: 36px;
     height: 36px;
     border-radius: 50%;
@@ -451,6 +445,7 @@ export const SearchIconButton = styled.div`
     border: 1px solid rgba(255, 140, 0, 0.3);
     cursor: pointer;
     transition: all 0.3s ease;
+    margin-right: 10px;
     
     &:hover {
       background: rgba(255, 140, 0, 0.25);
@@ -462,6 +457,280 @@ export const SearchIconButton = styled.div`
       color: #ff8c00;
       font-size: 16px;
     }
+  }
+  
+  @media (max-width: 480px) {
+    width: 34px;
+    height: 34px;
+    margin-right: 8px;
+    
+    svg {
+      font-size: 14px;
+    }
+  }
+`;
+
+
+export const NotificationButton = styled.div`
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, rgba(76, 175, 80, 0.1), rgba(139, 195, 74, 0.1));
+  border: 1px solid rgba(76, 175, 80, 0.2);
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  margin-right: 16px;
+  backdrop-filter: blur(10px);
+  
+  &:hover {
+    background: linear-gradient(135deg, rgba(76, 175, 80, 0.15), rgba(139, 195, 74, 0.15));
+    border-color: rgba(76, 175, 80, 0.3);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(76, 175, 80, 0.15);
+  }
+  
+  &:active {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(76, 175, 80, 0.1);
+  }
+  
+  svg {
+    color: #4CAF50;
+    font-size: 18px;
+    transition: all 0.2s ease;
+  }
+  
+  &:hover svg {
+    color: #388E3C;
+    transform: scale(1.1);
+  }
+  
+  @media (max-width: 768px) {
+    width: 36px;
+    height: 36px;
+    margin-right: 10px;
+    border-radius: 50%;
+    
+    svg {
+      font-size: 16px;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    width: 34px;
+    height: 34px;
+    margin-right: 8px;
+    
+    svg {
+      font-size: 14px;
+    }
+  }
+`;
+
+
+export const NotificationPanel = styled.div`
+  position: absolute;
+  top: 100%;
+  right: -160px;
+  width: 380px;
+  max-height: 500px;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.12), 0 4px 16px rgba(0, 0, 0, 0.08);
+  border: 1px solid #e4e6ea;
+  z-index: 1001;
+  overflow: hidden;
+  margin-top: 8px;
+  animation: slideDown 0.2s ease-out;
+  
+  @keyframes slideDown {
+    from {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  @media (max-width: 768px) {
+    right: -140px;
+    width: 340px;
+    max-height: 450px;
+  }
+  
+  @media (max-width: 480px) {
+    right: -280px;
+    left: auto;
+    width: 95vw;
+    max-width: 350px;
+    max-height: 400px;
+  }
+`;
+
+export const NotificationHeader = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+  border-bottom: 1px solid #e4e6ea;
+  background: #ffffff;
+  
+  h3 {
+    margin: 0;
+    color: #1c1e21;
+    font-size: 20px;
+    font-weight: 700;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  }
+  
+  div {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  
+  button {
+    background: none;
+    border: none;
+    color: #65676b;
+    font-size: 15px;
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 6px;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    
+    &:hover {
+      background-color: #f2f3f4;
+    }
+  }
+`;
+
+export const NotificationItem = styled.div`
+  display: flex;
+  padding: 12px 16px;
+  cursor: pointer;
+  position: relative;
+  background: ${props => props.$isRead ? '#ffffff' : '#e7f3ff'};
+  
+  &:hover {
+    background-color: #f2f3f4;
+  }
+  
+  &:before {
+    content: '';
+    position: absolute;
+    top: 20px;
+    left: 12px;
+    width: 8px;
+    height: 8px;
+    background: ${props => props.$isRead ? 'transparent' : '#1877f2'};
+    border-radius: 50%;
+  }
+`;
+
+export const NotificationAvatar = styled.div`
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  margin-right: 12px;
+  margin-left: 8px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  background: #f0f2f5;
+  
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+  }
+  
+  span {
+    font-size: 20px;
+    opacity: 0.6;
+  }
+`;
+
+export const NotificationContent = styled.div`
+  flex: 1;
+  padding-right: 12px;
+  
+  h4 {
+    margin: 0 0 4px 0;
+    color: #1c1e21;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1.4;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  }
+  
+  p {
+    margin: 0 0 4px 0;
+    color: #65676b;
+    font-size: 13px;
+    line-height: 1.4;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  }
+`;
+
+export const NotificationTime = styled.span`
+  color: #1877f2;
+  font-size: 13px;
+  font-weight: 500;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+`;
+
+export const NotificationActions = styled.div`
+  display: flex;
+  align-items: center;
+  margin-left: auto;
+  opacity: 0;
+  
+  ${NotificationItem}:hover & {
+    opacity: 1;
+  }
+  
+  button {
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+    border: none;
+    background: none;
+    color: #65676b;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 16px;
+    
+    &:hover {
+      background: #f2f3f4;
+    }
+  }
+`;
+
+export const EmptyNotification = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 32px 16px;
+  text-align: center;
+  
+  p {
+    color: #65676b;
+    font-size: 16px;
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
   }
 `;
 
@@ -517,20 +786,31 @@ export const Overlay = styled.div`
 
 export const NotificationBadge = styled.div`
   position: absolute;
-  top: -5px;
-  right: -5px;
-  background: #ff0000;
+  top: -6px;
+  right: -6px;
+  background: linear-gradient(135deg, #FF6B6B, #FF8E8E);
   color: white;
   border-radius: 50%;
-  width: 18px;
-  height: 18px;
+  width: 20px;
+  height: 20px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 10px;
-  font-weight: bold;
-  animation: ${pulse} 2s infinite;
-  box-shadow: 0 0 0 rgba(255, 0, 0, 0.4);
+  font-size: 11px;
+  font-weight: 600;
+  border: 2px solid white;
+  box-shadow: 0 2px 8px rgba(255, 107, 107, 0.3);
+  animation: ${pulse} 3s ease-in-out infinite;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    inset: -3px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #FF6B6B, #FF8E8E);
+    opacity: 0.3;
+    animation: ${pulse} 3s ease-in-out infinite;
+  }
 `;
 
 export const PremiumBadge = styled.span`
@@ -547,5 +827,65 @@ export const PremiumBadge = styled.span`
   
   @media (max-width: 480px) {
     display: none;
+  }
+`;
+
+export const ChatButton = styled.div`
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, rgba(33, 150, 243, 0.1), rgba(66, 165, 245, 0.1));
+  border: 1px solid rgba(33, 150, 243, 0.2);
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  margin-right: 16px;
+  backdrop-filter: blur(10px);
+  
+  &:hover {
+    background: linear-gradient(135deg, rgba(33, 150, 243, 0.15), rgba(66, 165, 245, 0.15));
+    border-color: rgba(33, 150, 243, 0.3);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(33, 150, 243, 0.15);
+  }
+  
+  &:active {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(33, 150, 243, 0.1);
+  }
+  
+  svg {
+    color: #2196F3;
+    font-size: 18px;
+    transition: all 0.2s ease;
+  }
+  
+  &:hover svg {
+    color: #1976D2;
+    transform: scale(1.1);
+  }
+  
+  @media (max-width: 768px) {
+    width: 36px;
+    height: 36px;
+    margin-right: 10px;
+    border-radius: 50%;
+    
+    svg {
+      font-size: 16px;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    width: 34px;
+    height: 34px;
+    margin-right: 8px;
+    
+    svg {
+      font-size: 14px;
+    }
   }
 `;

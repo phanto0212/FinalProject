@@ -1,5 +1,7 @@
-import React, { useState } from 'react';
+import React, { use, useEffect, useState } from 'react';
 import { Rate, Input, message, Avatar } from 'antd';
+import SockJS from 'sockjs-client';
+import { Client, Stomp } from '@stomp/stompjs';
 import {
   MessageOutlined,
   StarOutlined,
@@ -49,6 +51,8 @@ import {
   LoadMoreButton,
   ResponsiveWrapper
 } from './style';
+import newRequest from '../../utils/request';
+import { useNavigate } from 'react-router-dom';
 
 const { TextArea } = Input;
 
@@ -60,7 +64,60 @@ const CommentComponent = ({ recipeId }) => {
   const [likedComments, setLikedComments] = useState(new Set());
   const [replyingTo, setReplyingTo] = useState(null);
   const [replyText, setReplyText] = useState('');
-
+useEffect(() => {
+      let stompClient;
+      let socket;
+      
+      const connectWebSocket = () => {
+          socket = new SockJS('http://localhost:8081/ws'); // Kết nối WebSocket
+          stompClient = new Client({
+              webSocketFactory: () => socket,
+              debug: (str) => console.log('WebSocket Log:', str),
+          });
+  
+          stompClient.onConnect = () => {
+              console.log(`Connected to WebSocket for comment ${recipeId}`);
+  
+              // Subscribe to the payment topic
+              stompClient.subscribe(`/topic/message/comment/${recipeId}`, (message) => {
+                  const response = message.body;
+                 fetchComments(recipeId);
+                
+                
+                  
+              });
+              //  stompClient.subscribe(`/topic/message/conversation/${selectedChat.id}`, (message) => {
+              //     const response = message.body;
+              //    if (response === "success") {
+              //     loadMessages(selectedChat.id);
+              //     handleReadMessage(selectedChat.id);
+              //    }
+                  
+              // });
+          };
+  
+          stompClient.onStompError = (frame) => {
+              console.error('STOMP Error:', frame);
+          };
+  
+          stompClient.onDisconnect = () => {
+              console.log('Disconnected from WebSocket');
+              // Tự động kết nối lại sau 5 giây
+              setTimeout(connectWebSocket, 5000); // Sau 5 giây sẽ gọi lại connectWebSocket để thử kết nối lại
+          };
+  
+          stompClient.activate();
+      };
+  
+      connectWebSocket(); // Ban đầu kết nối
+  
+      // Cleanup WebSocket khi component unmount
+      return () => {
+          if (stompClient && stompClient.active) {
+              stompClient.deactivate();
+          }
+      };
+  }, [recipeId]); // Phụ thuộc vào id và movie.id
   // Sample data - replace with real API data
   const sampleComments = [
     {
@@ -120,8 +177,28 @@ const CommentComponent = ({ recipeId }) => {
       replies: []
     }
   ];
-
-  const [comments, setComments] = useState(sampleComments);
+  const [token, setToken] = useState('');
+  const navigate = useNavigate();
+  useEffect(()=>{
+    const storedToken = localStorage.getItem('authToken');
+    if (storedToken) {
+      setToken(storedToken);
+    }
+  }, [])
+  const [comments, setComments] = useState([]);
+  const fetchComments = async (recipeId) => {
+    try {
+      const response = await newRequest.get(`/api/comments/get/all/comment/${recipeId}`);
+      setComments(response.data.comments);
+    } catch (error) {
+      console.error('Error fetching comments:', error);
+      setComments(sampleComments); // Fallback to sample data on error
+    }
+  };
+  useEffect(() => {
+    fetchComments(recipeId);
+  }, [recipeId]);
+  // const user = JSON.parse(localStorage.getItem('user'));
   const currentUser = {
     name: 'Bạn',
     avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=80&h=80&fit=crop&crop=face'
@@ -145,38 +222,29 @@ const CommentComponent = ({ recipeId }) => {
       message.warning('Vui lòng đánh giá công thức!');
       return;
     }
-
+    if(!token){
+      navigate('/login');
+      return;
+    }
     setIsSubmitting(true);
-
-    try {
-      // Simulate API call
-      setTimeout(() => {
-        const comment = {
-          id: Date.now(),
-          author: currentUser.name,
-          avatar: currentUser.avatar,
+        const response = await newRequest.post('/api/comments/add', {
           rating: newRating,
-          date: 'Vừa xong',
           content: newComment,
-          likes: 0,
-          replies: []
-        };
-
-        setComments([comment, ...comments]);
+          recipeId : recipeId
+          
+        }, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      console.log(response);
         setNewComment('');
         setNewRating(0);
         setShowAddForm(false);
         setIsSubmitting(false);
         message.success('Đã thêm bình luận thành công!');
-      }, 1000);
-    } catch (error) {
-      setIsSubmitting(false);
-      message.error('Có lỗi xảy ra, vui lòng thử lại!');
-    }
   };
 
   // Handle like comment
-  const handleLikeComment = (commentId) => {
+  const handleLikeComment = async (commentId) => {
     const newLikedComments = new Set(likedComments);
     
     if (likedComments.has(commentId)) {
@@ -186,7 +254,9 @@ const CommentComponent = ({ recipeId }) => {
       newLikedComments.add(commentId);
       message.success('Đã thích bình luận');
     }
-    
+    const response = await newRequest.post(`/api/comment-like/like/${commentId}`, {}, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
     setLikedComments(newLikedComments);
 
     // Update like count in comments
@@ -224,7 +294,14 @@ const CommentComponent = ({ recipeId }) => {
         content: replyText
       };
 
-      // Update comments with new reply
+      const response = await newRequest.post('/api/comment-replies/add', {
+          commentId: commentId,
+          content: replyText
+          
+        }, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      console.log(response);
       setComments(comments.map(comment => 
         comment.id === commentId 
           ? { 

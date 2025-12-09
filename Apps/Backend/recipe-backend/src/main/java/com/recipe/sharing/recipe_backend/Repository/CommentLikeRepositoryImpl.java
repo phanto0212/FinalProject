@@ -38,6 +38,14 @@ public class CommentLikeRepositoryImpl implements CommentLikeRepository {
             commentLike.setComment(em.getReference(RecipeComment.class, commentId));
             commentLike.setUser(em.getReference(User.class, userId));
             em.persist(commentLike);
+        }else{
+           CommentLike commentLike =  em.createQuery("FROM CommentLike cl WHERE cl.comment.id = :commentId and cl.user.id = :userId ", CommentLike.class)
+                    .setParameter("commentId", commentId)
+                    .setParameter("userId", userId)
+                   .getSingleResult();
+           if(commentLike!=null){
+               em.remove(commentLike);
+           }
         }
     }
 

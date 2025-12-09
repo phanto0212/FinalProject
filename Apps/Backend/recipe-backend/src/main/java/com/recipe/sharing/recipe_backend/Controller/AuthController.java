@@ -2,15 +2,14 @@ package com.recipe.sharing.recipe_backend.Controller;
 
 import com.recipe.sharing.recipe_backend.Configs.JwtTokenUtil;
 import com.recipe.sharing.recipe_backend.DTO.ChangePasswordDTO;
-import com.recipe.sharing.recipe_backend.Entity.Role;
-import com.recipe.sharing.recipe_backend.Entity.User;
-import com.recipe.sharing.recipe_backend.Entity.User_Role;
+import com.recipe.sharing.recipe_backend.DTO.MyInfoDTO;
+import com.recipe.sharing.recipe_backend.DTO.StatMyInfoDTO;
+import com.recipe.sharing.recipe_backend.Entity.*;
 import com.recipe.sharing.recipe_backend.Request.ChangeInfo;
+import com.recipe.sharing.recipe_backend.Request.ChangeInfoRequest;
 import com.recipe.sharing.recipe_backend.Request.LoginRequest;
 import com.recipe.sharing.recipe_backend.Request.RegisterRequest;
-import com.recipe.sharing.recipe_backend.Service.RoleService;
-import com.recipe.sharing.recipe_backend.Service.UserRoleService;
-import com.recipe.sharing.recipe_backend.Service.UserService;
+import com.recipe.sharing.recipe_backend.Service.*;
 import com.recipe.sharing.recipe_backend.Util.JwtResponse;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletRequest;
@@ -26,6 +25,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -49,6 +49,12 @@ public class AuthController {
 
     @Autowired
     private UserRoleService userRoleService;
+
+    @Autowired
+    private RecipeService recipeService;
+
+    @Autowired
+    private UserFollowerService userFollowerService;
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
@@ -142,8 +148,10 @@ public class AuthController {
         user.setPassword(encodedPassword); // Nhớ mã hóa mật khẩu trước khi lưu
         user.setEmail(registerRequest.getEmail());
         user.setEnabled(true);
-        user.setFullName("nguyen van A");
         user.setTelephone("19001013");
+        user.setAvatar_url("https://scontent.fhan14-1.fna.fbcdn.net/v/t39.30808-1/475805523_969763461765386_851159384735407873_n.jpg?stp=cp6_dst-jpg_s200x200_tt6&_nc_cat=101&ccb=1-7&_nc_sid=e99d92&_nc_ohc=DJpAFztFlagQ7kNvwEW7hWm&_nc_oc=Adlvnm7IxijRwynh2psDqR2LIj3iXzMe1RBxCRX3unU9wzPdzieCqM1qg86txGe6e0g&_nc_zt=24&_nc_ht=scontent.fhan14-1.fna&_nc_gid=PBGTqe8xvwOnIJecAf-Hvg&oh=00_AfgmtuQ-cKCSXGTCMdjKXiw1NOupIH6Rj08i_t0N_KRjLw&oe=6929BD86");
+        user.setCreated_at(new Timestamp(System.currentTimeMillis()));
+        user.setFullName(registerRequest.getName());
         userService.AddOrUpdate(user);
 
         Role role = roleService.findByRoleName("User");
@@ -237,4 +245,62 @@ public class AuthController {
         }
     }
 
+    @GetMapping("/get/info")
+    public ResponseEntity<?> getInfo(HttpServletRequest request){
+        try{
+            User user = jwtTokenUtil.getUserByToken(request);
+            if(user == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not found");
+            }
+            MyInfoDTO myInfoDTO = new MyInfoDTO();
+            myInfoDTO.setName(user.getFullName());
+            myInfoDTO.setEmail(user.getEmail());
+            myInfoDTO.setPhone(user.getTelephone());
+            myInfoDTO.setBio(user.getBio());
+            myInfoDTO.setLocation(user.getLocation());
+            myInfoDTO.setJoinDate(user.getCreated_at().toLocalDateTime());
+            myInfoDTO.setAvatar(user.getAvatar_url());
+            StatMyInfoDTO statMyInfoDTO = new StatMyInfoDTO();
+            List<Recipe> recipes = recipeService.getRecipesByUserId(user.getId());
+            statMyInfoDTO.setRecipes(recipes.size());
+            int likes = 0;
+            for (Recipe recipe : recipes) {
+                likes += recipe.getTotalLikes();
+            }
+            statMyInfoDTO.setLikes(likes);
+            List<UserFollower> followers = userFollowerService.getListByFollower(user.getId());
+            List<UserFollower> followings = userFollowerService.getListByFollowing(user.getId());
+            statMyInfoDTO.setFollowers(followings.size());
+            statMyInfoDTO.setFollowing(followers.size());
+            myInfoDTO.setStats(statMyInfoDTO);
+            Map<String, Object> response = new HashMap<>();
+            response.put("myInfo", myInfoDTO);
+            response.put("userId", user.getId());
+            return ResponseEntity.ok(response);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
+    }
+    @PostMapping("/recipe/change/info")
+    public ResponseEntity<?> changeRecipeInfo(HttpServletRequest request, @RequestBody ChangeInfoRequest changeinfo){
+        try {
+            User user = jwtTokenUtil.getUserByToken(request);
+            if(user == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not found");
+            }
+            user.setLocation(changeinfo.getLocation());
+            user.setBio(changeinfo.getBio());
+            user.setFullName(changeinfo.getName());
+            user.setEmail(changeinfo.getEmail());
+            userService.AddOrUpdate(user);
+
+            return ResponseEntity.ok("oke");
+        }
+        catch(Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
+    }
 }

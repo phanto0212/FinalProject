@@ -1,122 +1,186 @@
-import React, { useState, useRef, useEffect } from "react";
-import YouTube from "react-youtube";
-import { CloseOutlined } from '@ant-design/icons';
-import { 
-  CardDetail, 
-  ContainerALl, 
-  ContainerButton, 
-  LinkButton, 
-  ModalCustom, 
-  NameCard, 
-  NameCardHeader, 
-  Overlay, 
-  StyledCard, 
-  TrailerContainer, 
-  ViewTrailer 
-} from "./style";
-import { useNavigate } from "react-router-dom";
-import newRequest from "../../utils/request";
+import React, { useState } from 'react';
+import { Rate, Button, Avatar, Tag } from 'antd';
+import {
+  HeartOutlined,
+  HeartFilled,
+  ShareAltOutlined,
+  ClockCircleOutlined,
+  FireOutlined,
+  UserOutlined,
+  EyeOutlined,
+  CommentOutlined
+} from '@ant-design/icons';
+import {
+  CardContainer,
+  CardWrapper,
+  ImageSection,
+  RecipeImage,
+  ImageOverlay,
+  SaveButton,
+  ShareButton,
+  ContentSection,
+  Header,
+  Title,
+  Description,
+  TagsContainer,
+  CategoryTag,
+  MetaSection,
+  MetaItem,
+  MetaIcon,
+  MetaText,
+  ChefSection,
+  ChefAvatar,
+  ChefInfo,
+  ChefName,
+  ChefBadge,
+  RatingSection,
+  RatingStars,
+  RatingCount,
+  ActionSection,
+  ViewButton,
+  CommentButton,
+  StatsSection,
+  StatItem
+} from './style';
 
-function CardComponent({movie, onClick}) {
-  const Navigate = useNavigate();
-  const [isModalVisible, setIsModalVisible] = useState(false);
-  const playerRef = useRef(null);
-  const [rate, setRate] = useState('chưa có đánh giá nào');
-
-  const fetchRate = async(movieId) => {
-    try {
-      const response = await newRequest.get(`/api/rate/get/rate/${movieId}`);
-      if (response.status == 200 && response.data.rate != 0) {
-        setRate(response.data.rate);
-      }
-    } catch(error) {
-      console.log(error);
-    }
-  }
-
-  useEffect(() => {
-    fetchRate(movie.id);
-  }, []);
-
-  const showModal = () => {
-    setIsModalVisible(true);
-    // Nếu player đã được khởi tạo, quay lại đầu video
-    if (playerRef.current) {
-      playerRef.current.internalPlayer.seekTo(0); // Quay lại đầu video
-    }
-  };
-
-  const handleCancel = () => {
-    setIsModalVisible(false);
-    if (playerRef.current) {
-      playerRef.current.internalPlayer.pauseVideo(); // Tạm dừng video
-    }
-  };
-
-  const videoOptions = {
-    width: '100%', // Đặt chiều rộng 100% để fit modal
-    height: '100%', // Đặt chiều cao 100% để fit modal
-    padding: '0',
-    playerVars: {
-      autoplay: 1, // Tự động phát video
-      controls: 0, // Tắt các điều khiển
+const CardComponent = ({ 
+  recipe = {
+    id: 1,
+    title: "Phở Bò Hà Nội Đặc Biệt",
+    description: "Món phở bò truyền thống với nước dùng trong vắt, thơm ngon từ xương bò ninh nhiều giờ. Đi kèm với thịt bò tái, chín và các loại rau thơm đặc trưng.",
+    image: "https://images.unsplash.com/photo-1559847844-5315695dadae?w=600&h=400&fit=crop",
+    category: "Món chính",
+    cookingTime: "3 giờ",
+    difficulty: "Khó",
+    rating: 4.8,
+    reviewCount: 156,
+    views: 2340,
+    comments: 45,
+    chef: {
+      name: "Chef Minh Anh",
+      avatar: "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=80&h=80&fit=crop&crop=face",
+      isVerified: true
     },
+    tags: ["Việt Nam", "Truyền thống", "Nước dùng"]
+  }
+}) => {
+  const [isSaved, setIsSaved] = useState(false);
+
+  const handleSave = () => {
+    setIsSaved(!isSaved);
+  };
+
+  const handleShare = () => {
+    // Logic chia sẻ
+    console.log('Share recipe:', recipe.title);
+  };
+
+  const handleView = () => {
+    // Logic xem chi tiết
+    console.log('View recipe:', recipe.id);
+  };
+
+  const handleComment = () => {
+    // Logic bình luận
+    console.log('Comment on recipe:', recipe.id);
   };
 
   return (
-    <StyledCard
-      hoverable
-      cover={
-        <img
-         onClick={()=>{Navigate(`/movie/detail/${movie.id}`)}}
-          alt="Movie Poster"
-          src={movie.poster_url}
-        />
-      }
-    >
-      <Overlay onClick={()=>{Navigate(`/movie/detail/${movie.id}`)}}>
-        <NameCard>{movie.title}</NameCard>
-        <CardDetail><span style={{ color: '#F3EA28' }}>Thể loại: </span>{movie.kind}</CardDetail>
-        <CardDetail><span style={{ color: '#F3EA28' }}>Tác giả: </span>{movie.director}</CardDetail>
-        <CardDetail><span style={{ color: '#F3EA28' }}>Đánh giá: </span>{rate == 'chưa có đánh giá nào' ? rate : <>{rate}/10</>}</CardDetail>
-        <CardDetail><span style={{ color: '#F3EA28' }}>Thời lượng: </span>{movie.duration}'</CardDetail>
-      </Overlay>
-      <NameCardHeader>{movie.title.length > 20 ? `${movie.title.substring(0, 28)}...` : movie.title}</NameCardHeader>
-      <ContainerALl>
-        <TrailerContainer onClick={showModal}>
-          <img style={{ marginBottom: '4px' }} alt="icon" src="https://cinestar.com.vn/assets/images/icon-play-vid.svg" />
-          <ViewTrailer>Xem Trailer</ViewTrailer>
-        </TrailerContainer>
-        <ContainerButton onClick={()=>{Navigate(`/movie/detail/${movie.id}`)}} style={{ backgroundColor: '#ff7401' }}>
-          <LinkButton style={{ color: '#fff' }}>Đặt vé</LinkButton>
-        </ContainerButton>
-      </ContainerALl>
+    <CardContainer>
+      <CardWrapper>
+        <ImageSection>
+          <RecipeImage src={recipe.image} alt={recipe.title} />
+          <ImageOverlay>
+            <SaveButton 
+              $isSaved={isSaved}
+              onClick={handleSave}
+            >
+              {isSaved ? <HeartFilled /> : <HeartOutlined />}
+            </SaveButton>
+            <ShareButton onClick={handleShare}>
+              <ShareAltOutlined />
+            </ShareButton>
+          </ImageOverlay>
+        </ImageSection>
 
-      {/* Modal chứa video YouTube */}
-      <ModalCustom 
-        visible={isModalVisible} 
-        onCancel={handleCancel} 
-        footer={null} 
-        centered
-        width={900}
-        height={500}
-        styles={{
-          body: { padding: 0, backgroundColor: 'transparent' },
-          mask: { backgroundColor: 'rgba(0, 0, 0, 0.9)' }
-        }}
-        closeIcon={<CloseOutlined style={{ color: 'red', fontSize: '20px', margin:'0 0 19px 22px' }} />}
-      >
-        <div style={{ width: '100%', height: '450px', backgroundColor: 'transparent' }}>
-          <YouTube 
-            videoId={movie.trailer_url}
-            opts={videoOptions} 
-            ref={playerRef} 
-            style={{ width: '100%', height: '100%', padding: '0' }}
-          />
-        </div>
-      </ModalCustom>
-    </StyledCard>
+        <ContentSection>
+          <Header>
+            <Title>{recipe.title}</Title>
+            <Description>{recipe.description}</Description>
+          </Header>
+
+          <TagsContainer>
+            <CategoryTag color="green">{recipe.category}</CategoryTag>
+            {recipe.tags.map((tag, index) => (
+              <CategoryTag key={index} color="orange">{tag}</CategoryTag>
+            ))}
+          </TagsContainer>
+
+          <MetaSection>
+            <MetaItem>
+              <MetaIcon>
+                <ClockCircleOutlined />
+              </MetaIcon>
+              <MetaText>{recipe.cookingTime}</MetaText>
+            </MetaItem>
+            <MetaItem>
+              <MetaIcon>
+                <FireOutlined />
+              </MetaIcon>
+              <MetaText>{recipe.difficulty}</MetaText>
+            </MetaItem>
+            <MetaItem>
+              <MetaIcon>
+                <EyeOutlined />
+              </MetaIcon>
+              <MetaText>{recipe.views.toLocaleString()} lượt xem</MetaText>
+            </MetaItem>
+          </MetaSection>
+
+          <ChefSection>
+            <ChefAvatar 
+              src={recipe.chef.avatar} 
+              size={40}
+              icon={<UserOutlined />}
+            />
+            <ChefInfo>
+              <ChefName>
+                {recipe.chef.name}
+                {recipe.chef.isVerified && (
+                  <ChefBadge>✓</ChefBadge>
+                )}
+              </ChefName>
+            </ChefInfo>
+          </ChefSection>
+
+          <RatingSection>
+            <RatingStars>
+              <Rate 
+                disabled 
+                value={recipe.rating} 
+                allowHalf
+                style={{ fontSize: '16px', color: '#ff8c00' }}
+              />
+            </RatingStars>
+            <RatingCount>
+              {recipe.rating} ({recipe.reviewCount} đánh giá)
+            </RatingCount>
+          </RatingSection>
+
+          <ActionSection>
+            <ViewButton onClick={handleView}>
+              <EyeOutlined />
+              <span>Xem công thức</span>
+            </ViewButton>
+            <CommentButton onClick={handleComment}>
+              <CommentOutlined />
+              <span>{recipe.comments}</span>
+            </CommentButton>
+          </ActionSection>
+        </ContentSection>
+      </CardWrapper>
+    </CardContainer>
   );
-}
+};
 
 export default CardComponent;

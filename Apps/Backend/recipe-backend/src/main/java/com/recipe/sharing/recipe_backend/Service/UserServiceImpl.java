@@ -56,4 +56,9 @@ public User getUserByEmail(String email) {
 	}
 }
 
+	@Override
+	public List<User> getAllUsersOther(Long userid) {
+		return userRespository.getAllUsersOther(userid);
+	}
+
 }

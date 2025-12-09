@@ -13,4 +13,5 @@ public interface UserRepositoryCustom {
 	User getUserById(int id);
 	void deleteUserByid(int id);
 	User getUserbyEmail(String email);
+	List<User> getAllUsersOther(Long userid);
 }

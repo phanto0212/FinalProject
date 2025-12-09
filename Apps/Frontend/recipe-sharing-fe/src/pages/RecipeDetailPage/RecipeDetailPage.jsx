@@ -21,7 +21,7 @@ function RecipeDetailPage() {
   return (
     <>
       <RecipeDetailComponent recipeId={recipeId} recipeData={recipeData}/>
-      <CommentComponent />
+      <CommentComponent recipeId={recipeId} />
     </>
   )
 }

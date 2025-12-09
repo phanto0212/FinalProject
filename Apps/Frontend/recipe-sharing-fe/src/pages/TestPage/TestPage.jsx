@@ -1,111 +1,125 @@
-import React from 'react'
+import React from 'react';
 import CardComponent from '../../components/CardComponent/CardComponent';
+import styled from 'styled-components';
 
-function TestPage() {
-    // Dữ liệu mẫu - lưu ý CardComponent dùng prop "movie" chứ không phải "recipe"
-    const sampleRecipes = [
-      {
-        id: 1,
-        title: "Phở Bò Truyền Thống",
-        poster_url: "https://images.unsplash.com/photo-1559847844-5315695dadae?w=300&h=220&fit=crop",
-        category: "Món chính",
-        chef: "Chef Minh",
-        cooking_time: "180",
-        kind: "Món Việt", // fallback cho category
-        director: "Bà Ngoại", // fallback cho chef
-        duration: "120" // fallback cho cooking_time
+const TestPageContainer = styled.div`
+  padding: 20px;
+  background: linear-gradient(135deg, 
+    rgba(45, 80, 22, 0.05) 0%,
+    rgba(255, 140, 0, 0.05) 50%,
+    rgba(45, 80, 22, 0.05) 100%
+  );
+  min-height: 100vh;
+`;
+
+const PageTitle = styled.h1`
+  text-align: center;
+  color: #2d5016;
+  font-size: 32px;
+  font-weight: 700;
+  margin-bottom: 30px;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+`;
+
+const CardsContainer = styled.div`
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+`;
+
+const TestPage = () => {
+  // Sample data cho nhiều cards
+  const sampleRecipes = [
+    {
+      id: 1,
+      title: "Phở Bò Hà Nội Đặc Biệt",
+      description: "Món phở bò truyền thống với nước dùng trong vắt, thơm ngon từ xương bò ninh nhiều giờ. Đi kèm với thịt bò tái, chín và các loại rau thơm đặc trưng.",
+      image: "https://images.unsplash.com/photo-1559847844-5315695dadae?w=600&h=400&fit=crop",
+      category: "Món chính",
+      cookingTime: "3 giờ",
+      difficulty: "Khó",
+      rating: 4.8,
+      reviewCount: 156,
+      views: 2340,
+      comments: 45,
+      chef: {
+        name: "Chef Minh Anh",
+        avatar: "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=80&h=80&fit=crop&crop=face",
+        isVerified: true
       },
-      {
-        id: 2,
-        title: "Bánh Mì Việt Nam",
-        poster_url: "https://images.unsplash.com/photo-1598511726623-d2e9996892f0?w=300&h=220&fit=crop",
-        category: "Ăn sáng",
-        chef: "Cô Lan",
-        cooking_time: "30",
-        kind: "Bánh mì",
-        director: "Cô Lan",
-        duration: "25"
+      tags: ["Việt Nam", "Truyền thống", "Nước dùng"]
+    },
+    {
+      id: 2,
+      title: "Bánh Mì Thịt Nướng Sài Gòn",
+      description: "Bánh mì giòn rụm với thịt nướng thơm lừng, rau răm, dưa leo và nước sốt đặc biệt. Hương vị đậm đà của miền Nam.",
+      image: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=600&h=400&fit=crop",
+      category: "Món ăn nhẹ",
+      cookingTime: "45 phút",
+      difficulty: "Trung bình",
+      rating: 4.6,
+      reviewCount: 89,
+      views: 1520,
+      comments: 28,
+      chef: {
+        name: "Chef Thu Hương",
+        avatar: "https://images.unsplash.com/photo-1494790108755-2616b612b789?w=80&h=80&fit=crop&crop=face",
+        isVerified: true
       },
-      {
-        id: 3,
-        title: "Cơm Tấm Sài Gòn",
-        poster_url: "https://images.unsplash.com/photo-1603133872878-684f208fb84b?w=300&h=220&fit=crop",
-        category: "Món chính",
-        chef: "Bác Sáu",
-        cooking_time: "45",
-        kind: "Cơm",
-        director: "Bác Sáu", 
-        duration: "40"
-      }
-    ];
+      tags: ["Sài Gòn", "Đường phố", "Nướng"]
+    },
+    {
+      id: 3,
+      title: "Salad Tôm Bơ Kiểu Thái",
+      description: "Salad tươi mát với tôm tích, bơ chín mềm, rau xanh và nước sốt chua ngọt kiểu Thái. Món ăn healthy và bổ dưỡng.",
+      image: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=600&h=400&fit=crop",
+      category: "Món healthy",
+      cookingTime: "20 phút",
+      difficulty: "Dễ",
+      rating: 4.7,
+      reviewCount: 124,
+      views: 1890,
+      comments: 32,
+      chef: {
+        name: "Chef Minh Tuấn",
+        avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=80&h=80&fit=crop&crop=face",
+        isVerified: false
+      },
+      tags: ["Thái Lan", "Healthy", "Tôm"]
+    },
+    {
+      id: 4,
+      title: "Mì Quảng Gà Tôm",
+      description: "Đặc sản miền Trung với sợi mì dai ngon, nước dùng đậm đà từ xương gà, tôm tươi và các loại rau thơm truyền thống.",
+      image: "https://images.unsplash.com/photo-1585032226651-759b368d7246?w=600&h=400&fit=crop",
+      category: "Món chính",
+      cookingTime: "2 giờ",
+      difficulty: "Khó",
+      rating: 4.9,
+      reviewCount: 201,
+      views: 3200,
+      comments: 67,
+      chef: {
+        name: "Chef Đức Anh",
+        avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=80&h=80&fit=crop&crop=face",
+        isVerified: true
+      },
+      tags: ["Miền Trung", "Quảng Nam", "Đặc sản"]
+    }
+  ];
+
   return (
-    <div style={{ 
-      padding: '40px 20px',
-      backgroundColor: '#f8fffe',
-      minHeight: '100vh'
-    }}>
-      {/* Header */}
-      <div style={{ textAlign: 'center', marginBottom: '50px' }}>
-        <h1 style={{ 
-          color: '#2d5016',
-          fontSize: '2.5rem',
-          marginBottom: '10px',
-          fontWeight: '700'
-        }}>
-          🍳 Test CardComponent
-        </h1>
-        <p style={{ 
-          color: '#4a7c59',
-          fontSize: '1.2rem'
-        }}>
-          Xem CardComponent hoạt động với theme recipe sharing
-        </p>
-      </div>
-
-      {/* Grid Cards */}
-      <div style={{ 
-        display: 'grid', 
-        gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
-        gap: '30px',
-        padding: '20px',
-        maxWidth: '1200px',
-        margin: '0 auto'
-      }}>
-        {sampleRecipes.map(recipe => (
-          <div key={recipe.id} style={{ display: 'flex', justifyContent: 'center' }}>
-            <CardComponent 
-              movie={recipe} // Lưu ý: CardComponent dùng prop "movie"
-              onClick={() => {
-                console.log('Recipe clicked:', recipe.title);
-                alert(`Bạn click vào: ${recipe.title}`);
-              }}
-            />
-          </div>
+    <TestPageContainer>
+      <PageTitle>🍜 Recipe Cards Test Page</PageTitle>
+      <CardsContainer>
+        {sampleRecipes.map((recipe) => (
+          <CardComponent key={recipe.id} recipe={recipe} />
         ))}
-      </div>
+      </CardsContainer>
+    </TestPageContainer>
+  );
+};
 
-      {/* Instructions */}
-      <div style={{
-        textAlign: 'center',
-        marginTop: '50px',
-        padding: '30px',
-        backgroundColor: 'rgba(45, 80, 22, 0.1)',
-        borderRadius: '15px',
-        maxWidth: '600px',
-        margin: '50px auto 0'
-      }}>
-        <h3 style={{ color: '#2d5016', marginBottom: '15px' }}>
-          ✨ Hướng dẫn sử dụng:
-        </h3>
-        <p style={{ color: '#4a7c59', lineHeight: '1.6' }}>
-          • Hover vào card để xem thông tin chi tiết<br/>
-          • Click "Xem Công Thức" để mở modal<br/>
-          • Click "Yêu Thích ❤️" để thêm vào favorites<br/>
-          • Responsive design cho mọi thiết bị
-        </p>
-      </div>
-    </div>
-  )
-}
-
-export default TestPage
+export default TestPage;

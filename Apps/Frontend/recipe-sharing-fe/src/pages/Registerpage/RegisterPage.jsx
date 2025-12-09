@@ -95,6 +95,7 @@ const RegisterPage = () => {
         email: values.email,
         password: values.password,
         repassword: values.password,
+        name: values.name
       });
       
       if (response.status === 200) {

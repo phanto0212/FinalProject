@@ -35,4 +35,9 @@ public class RecipeServiceImpl implements  RecipeService {
     public List<Recipe> getAllRecipeSuggestions(String keyword) {
         return   recipeRepository.getAllRecipeSuggestions(keyword);
     }
+
+    @Override
+    public List<Recipe> getRecipesByUserId(Long userId) {
+        return recipeRepository.getRecipesByUserId(userId);
+    }
 }

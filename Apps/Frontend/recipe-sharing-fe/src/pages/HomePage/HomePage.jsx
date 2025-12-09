@@ -31,6 +31,7 @@ import {
   StatLabel,
   ResponsiveCol
 } from './style';
+import newRequest from '../../utils/request';
 
 const HomePage = () => {
   const navigate = useNavigate();
@@ -42,7 +43,18 @@ const HomePage = () => {
     const timer = setTimeout(() => setIsVisible(true), 1000);
     return () => clearTimeout(timer);
   }, []);
+const handleFetchRecipeRating = async() =>{
+    try {
+      const response = await newRequest.get('/api/recipes/handle/refresh/rating');
+      console.log('Recipe ratings:', response.data);
+    } catch (error) {
+      console.error('Error fetching recipe ratings:', error);
+    }
+  }
 
+  useEffect(() => {
+    handleFetchRecipeRating();
+  }, []);
   // Animated counter effect
   useEffect(() => {
     if (isVisible) {

@@ -139,52 +139,59 @@ const AIRecommendComponent = () => {
   const getSuggestionsForInput = async (input) => {
     try {
       const response = await newRequest.post('/api/ai/chat', {
-        prompt: `Bạn là một trợ lý gợi ý nấu ăn.\nNgười dùng sẽ nhập vào danh sách nguyên liệu.\nNhiệm vụ của bạn:\n1. Gợi ý 1 món ăn phổ biến nhất phù hợp với nguyên liệu.\n2. Bạn hãy trả lời đúng chỉ mỗi text của món ăn thôi thôi không thêm lời giải thích không ký tự đặc biệt.\n\nVí dụ:\nNguyên liệu: "trứng, cà chua"\nTrả lời: "Trứng chiên cà chua"\n\nNguyên liệu: "thịt bò, hành tây"\nTrả lời:  "Bò xào hành tây"\n\n Nguyên liệu: "${input}"`
+        prompt: `Bạn là một trợ lý gợi ý nấu ăn.\nNgười dùng sẽ nhập vào danh sách nguyên liệu.\nNhiệm vụ của bạn:\n1. Gợi ý 1 món ăn phổ biến nhất phù hợp với nguyên liệu.\n2. Nếu người dùng nhập nội dung không liên quan đến nguyên liệu nấu ăn thì trả về đúng text "cancel".\n3. Bạn hãy trả lời đúng chỉ mỗi text của món ăn thôi không thêm lời giải thích không ký tự đặc biệt.\n\nVí dụ:\nNguyên liệu: "trứng, cà chua"\nTrả lời: "Trứng chiên cà chua"\n\nNguyên liệu: "thịt bò, hành tây"\nTrả lời:  "Bò xào hành tây"\n\n Nguyên liệu: "${input}"`
       });
 
-      if (response.status === 200) {
+      if (response.status === 200 && response.data?.message !== 'cancel') {
         return {
           response: response.data?.title || response.data?.message || '',
-          suggestedRecipes: response.data?.recipes || []
+          suggestedRecipes: response.data?.recipes || [],
+          isError: false
+        };
+      } else {
+        return {
+          response: 'Xin lỗi, tôi chưa có gợi ý phù hợp cho nguyên liệu này.',
+          suggestedRecipes: [],
+          isError: true
         };
       }
     } catch (error) {
-      
       console.error('getSuggestionsForInput error:', error);
+      return {
+        response: 'Xin lỗi, đã có lỗi xảy ra. Vui lòng thử lại!',
+        suggestedRecipes: [],
+        isError: true
+      };
     }
-
-    return {
-      response: 'Xin lỗi, tôi chưa có gợi ý phù hợp cho nguyên liệu này.',
-      suggestedRecipes: []
-    };
   };
   const generateAIResponse = async (userInput) => {
     const cleanedInput = (userInput || '').trim();
-    const { response, suggestedRecipes } = await getSuggestionsForInput(cleanedInput);
+    const { response, suggestedRecipes, isError } = await getSuggestionsForInput(cleanedInput);
 
-    if(response === '') {
-       return {
-      id: Date.now() + 1,
-      type: 'ai',
-      content: 'Xin lỗi, tôi chưa có gợi ý phù hợp cho nguyên liệu này.',
-      timestamp: new Date(),
-      recipes: []
-    };
+    // Nếu là lỗi hoặc không có gợi ý -> trả về message trực tiếp, không thêm intro
+    if (isError || response === '' || response.includes('Xin lỗi')) {
+      return {
+        id: Date.now() + 1,
+        type: 'ai',
+        content: response || 'Xin lỗi, tôi chưa có gợi ý phù hợp cho nguyên liệu này.',
+        timestamp: new Date(),
+        recipes: []
+      };
     }
+
+    // Có gợi ý thành công -> thêm intro phrases
     const introPhrases = [
       '🍳 Mình gợi ý bạn thử món',
       '🥗 Dựa trên nguyên liệu của bạn, hãy khám phá',
       '🔥 Một lựa chọn đậm đà dành cho bạn là',
       '🍽️ Thực đơn hôm nay gọi tên',
-      '🌿 Một gợi ý tươi mới: '
+      '🌿 Một gợi ý tươi mới:'
     ];
 
     const randomIntro = introPhrases[Math.floor(Math.random() * introPhrases.length)];
     const recipeName = (response || '').trim();
     const highlightInput = cleanedInput ? ` — hoàn hảo khi bạn có ${cleanedInput}!` : '!';
-    const friendlyMessage = recipeName
-      ? `${randomIntro} ${recipeName}${highlightInput}`
-      : 'Tôi đang cập nhật thêm dữ liệu, bạn thử lại sau nhé!';
+    const friendlyMessage = `${randomIntro} ${recipeName}${highlightInput}`;
 
     return {
       id: Date.now() + 1,

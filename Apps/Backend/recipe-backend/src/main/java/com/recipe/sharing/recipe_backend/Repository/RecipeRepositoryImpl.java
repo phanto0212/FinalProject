@@ -59,4 +59,12 @@ public class RecipeRepositoryImpl implements RecipeRepository {
             throw e;
         }
     }
+
+    @Override
+    public List<Recipe> getRecipesByUserId(Long userId) {
+        String hql = "FROM Recipe R WHERE R.chefId = :userId and R.status = 'P'";
+        return entityManager.createQuery(hql, Recipe.class)
+                .setParameter("userId", userId)
+                .getResultList();
+    }
 }

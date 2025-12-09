@@ -59,6 +59,7 @@ import {
   LoadingSkeleton
 } from './style';
 import { useParams } from 'react-router-dom';
+import newRequest from '../../utils/request';
 
 const RecipeDetailComponent = ({ recipeId, recipeData, loading }) => {
   const [userRating, setUserRating] = useState(0);
@@ -120,10 +121,25 @@ const RecipeDetailComponent = ({ recipeId, recipeData, loading }) => {
       bio: "15 năm kinh nghiệm trong ẩm thực truyền thống Việt Nam, từng làm việc tại các nhà hàng 5 sao."
     },
     
-    tags: []
+    tags: ["Món chính", "Truyền thống", "Hà Nội", "Phở", "Bò", "Nước dùng", "Khó"]
   };
 
   const recipe = recipeData || defaultRecipe;
+  const handlePlusView = async(id) =>{
+    try {
+      // Gọi API để tăng lượt xem
+      await newRequest.post(`/api/recipes/plus/view/${id}`);
+    } catch (error) {
+      console.error('Lỗi khi tăng lượt xem:', error);
+    }
+  }
+
+  useEffect(()=>{
+    if(recipeId){
+      handlePlusView(recipeId);
+    }
+
+  }, [recipeId]);
 
   // Handle rating change
   const handleRatingChange = (value) => {
@@ -165,7 +181,7 @@ const RecipeDetailComponent = ({ recipeId, recipeData, loading }) => {
       </DetailContainer>
     );
   }
-
+  
   return (
     <ResponsiveWrapper>
       <DetailContainer>
